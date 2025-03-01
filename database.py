@@ -93,22 +93,30 @@ def drop_course(student_id, course_id, teacher_id):
     finally:
         conn.close()
 
+
 def get_student_grades(student_id):
     """
-    Retrieves a student's grades.
-    Returns: (CourseID, Course_Name, Teacher_Name, Grade, Date)
+    获取学生的成绩信息。
+    返回：(CourseID, Course_Name, Teacher_Name, Grade, Date)
     """
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT g.CourseID, c.Course_Name, t.Teacher_Name, g.Grade, g.Date "
-           "FROM Grade g "
-           "JOIN Course c ON g.CourseID = c.CourseID "
-           "JOIN Teacher t ON g.TeacherID = t.TeacherID "
-           "WHERE g.StudentID = %s")
+
+    sql = """
+    SELECT g.CourseID, c.Course_Name, t.Teacher_Name, g.Grade, g.grade_Date
+    FROM Grade g
+    JOIN Course c ON g.CourseID = c.CourseID
+    JOIN Course_Info ci ON g.CourseID = ci.CourseID
+    JOIN Teacher t ON ci.TeacherID = t.TeacherID
+    WHERE g.StudentID = %s
+    """
+
     cur.execute(sql, (student_id,))
     rows = cur.fetchall()
     conn.close()
+
     return rows
+
 
 def get_course_avg_grade(course_id, teacher_id):
     """
@@ -119,8 +127,9 @@ def get_course_avg_grade(course_id, teacher_id):
     cur = conn.cursor()
     sql = ("SELECT COUNT(*) AS num_students, AVG(Grade) AS avg_grade "
            "FROM Grade "
-           "WHERE CourseID = %s AND TeacherID = %s")
-    cur.execute(sql, (course_id, teacher_id))
+           "WHERE CourseID = %s")
+    cur.execute(sql, (course_id,))
+
     row = cur.fetchone()
     conn.close()
     return row if row else (0, None)
