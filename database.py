@@ -1,12 +1,6 @@
-# database.py
-
-
 import db_config as connect
 
 def get_user_info(user_id, role):
-    """
-    获取用户信息（学生 or 教师）
-    """
     conn = connect.connect_db()
     cur = conn.cursor()
 
@@ -131,19 +125,55 @@ def get_course_avg_grade(course_id, teacher_id):
     conn.close()
     return row if row else (0, None)
 
-def insert_grade(course_id, student_id, teacher_id, grade, grade_date):
-    """
-    Inserts a new grade record.
-    """
+def insert_grade(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date):
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("INSERT INTO Grade (CourseID, StudentID, TeacherID, Grade, Date) "
-           "VALUES (%s, %s, %s, %s, %s)")
+    sql = ("INSERT INTO grade (courseid, studentid. teacherid, grade, grade_date, enrollment_ddate)"
+           "VALUES (%s, %s, %s, %s, %s, %s)")
+    cur.execute(sql,(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date, ))
+    conn.commit()
+    conn.close()
+    return
+
+def get_student_avg_grade(student_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT AVG(grade) as avg_grade"
+           "FROM grade"
+           "WHERE studentid = %s")
+    cur.execute(sql,(student_id, ))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def query_teacher_course(teacher_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT *"
+           "FROM course c"
+           "JOIN course_info ci ON c.courseid = ci.courseid"
+           "WHERE ci.teacherid = %s")
+    cur.execute(sql,(teacher_id, ))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def delete_stu(student_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
     try:
-        cur.execute(sql, (course_id, student_id, teacher_id, grade, grade_date))
+        conn.autocommit = False
+
+        cur.execute("DELETE FROM grade WHERE studentid = %s;", (student_id,))
+        cur.execute("DELETE FROM enrollment WHERE studentid = %s;", (student_id,))
+        cur.execute("DELETE FROM student WHERE studentid = %s;", (student_id,))
+
         conn.commit()
-    except Exception as e:
-        print("Insert Grade Error:", e)
+
+    except:
+        conn.rollback()  # Rollback in case of error
+
     finally:
         conn.close()
 
