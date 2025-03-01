@@ -1,5 +1,36 @@
 import db_config as connect
 
+
+def check_login(username, password, role):
+    conn = connect.connect_db()
+    if not conn:
+        return False  # 数据库连接失败
+
+    cursor = conn.cursor()
+    table = "student" if role == "Student" else "teacher"
+    sql = f"SELECT * FROM {table} WHERE username = %s AND password = %s"
+    cursor.execute(sql, (username, password))
+    user = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return user is not None
+
+# 获取用户信息
+def get_user_info(username, role):
+    conn = connect.connect_db()
+    if not conn:
+        return None  # 连接失败
+
+    cursor = conn.cursor()
+    table = "student" if role == "Student" else "teacher"
+    sql = f"SELECT * FROM {table} WHERE username = %s"
+    cursor.execute(sql, (username,))
+    user_info = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+    return user_info
+
 def get_stu_info(student_id):
     conn = connect.connect_db()
     cur = conn.cursor()
@@ -76,7 +107,7 @@ def get_grade(student_id):
     rows = cur.fetchall()
     return rows
 
-def get_avg_grade(course_id, teacher_id):
+def get_course_avg_grade(course_id, teacher_id):
     conn = connect.connect_db()
     cur = conn.cursor()
     sql = ("SELECT count(*) AS num_students, AVG(grade) AS avg_grade"
@@ -85,6 +116,17 @@ def get_avg_grade(course_id, teacher_id):
     cur.execute(sql,(course_id, teacher_id, ))
     rows = cur.fetchall()
     return rows
+
+def insert_grade(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("INSERT INTO grade (courseid, studentid. teacherid, grade, grade_date, enrollment_ddate)"
+           "VALUES (%s, %s, %s, %s, %s, %s)")
+    cur.execute(sql,(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date, ))
+    return
+
+def get_ccourse_avg_grade():
+
 
 
 
