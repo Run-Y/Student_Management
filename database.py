@@ -125,9 +125,9 @@ def get_course_avg_grade(course_id, teacher_id):
     """
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT COUNT(*) AS num_students, AVG(Grade) AS avg_grade "
-           "FROM Grade "
-           "WHERE CourseID = %s")
+    sql = ("SELECT COUNT(*) AS num_students, AVG(grade) AS avg_grade "
+           "FROM grade"
+           "WHERE courseid = %s")
     cur.execute(sql, (course_id,))
 
     row = cur.fetchone()
@@ -147,8 +147,20 @@ def insert_grade(course_id, student_id,  teacher_id, grade, grade_date, enrolLme
 def get_student_avg_grade(student_id):
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT AVG(grade) as avg_grade"
-           "FROM grade"
+    sql = ("SELECT AVG(grade) as avg_grade "
+           "FROM grade "
+           "WHERE studentid = %s")
+    cur.execute(sql,(student_id, ))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def get_credit_sum(student_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT SUM(c.credits)"
+           "FROM course c "
+           "JOIN grade g ON c.courseid = g.courseid "
            "WHERE studentid = %s")
     cur.execute(sql,(student_id, ))
     rows = cur.fetchall()
