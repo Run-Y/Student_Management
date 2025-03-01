@@ -125,7 +125,7 @@ def insert_grade(course_id, student_id,  teacher_id, grade, grade_date, enrolLme
     cur.execute(sql,(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date, ))
     return
 
-def get_ccourse_avg_grade():
+# def get_ccourse_avg_grade():
 
 
 

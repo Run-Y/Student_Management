@@ -5,7 +5,7 @@ DB_CONFIG = {
     "port": 5432,
     "database": "project",
     "user": "postgres",
-    "password": "1263006339"
+    "password": "Qwerty1234"
 }
 
 def connect_db():
