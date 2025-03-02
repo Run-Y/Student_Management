@@ -33,7 +33,6 @@ def show_students(right_frame, tree):
         return
 
     course_id = tree.item(selected_item)["values"][0]  # 获取课程ID
-    teacher_id = tree.item(selected_item)["values"][2]  # 获取教师ID（如果数据里有）
 
     students = db.get_students_by_course(course_id)  # 这里修正
 
@@ -45,7 +44,7 @@ def show_students(right_frame, tree):
         widget.destroy()
 
     # 创建 Treeview 显示学生信息
-    columns = ("Student ID", "Name", "Gender", "Major")
+    columns = ("Student ID", "Name", "Gender", "Major", "Grade")
     student_tree = ttk.Treeview(right_frame, columns=columns, show="headings")
 
     for col in columns:
