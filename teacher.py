@@ -55,6 +55,10 @@ def show_students(right_frame, tree):
     student_tree.bind("<Double-1>", lambda event: add_grade(student_tree, course_id))
     student_tree.pack(expand=True, fill="both", padx=10, pady=10)
 
+    # 添加删除学生按钮
+    delete_button = tk.Button(right_frame, text="Delete Student", command=lambda: delete_student(student_tree))
+    delete_button.pack(pady=10)
+
 def add_grade(student_tree, course_id):
     selected_item = student_tree.focus()
     if not selected_item:
@@ -84,3 +88,21 @@ def add_grade(student_tree, course_id):
     db.insert_grade(course_id, student_id, grade, grade_date, enrollment_date)
     messagebox.showinfo("Success", "Grade added successfully!")
     show_students(student_tree.master, student_tree)
+
+def delete_student(student_tree):
+    selected_item = student_tree.focus()
+    if not selected_item:
+        messagebox.showwarning("Warning", "Please select a student.")
+        return
+
+    student_data = student_tree.item(selected_item)["values"]
+    student_id, student_name, *_ = student_data
+
+    confirm = messagebox.askyesno("Confirm", f"Are you sure you want to delete {student_name}?")
+    if not confirm:
+        return
+
+    db.delete_stu(student_id)
+    messagebox.showinfo("Success", f"Student {student_name} deleted successfully!")
+    show_students(student_tree.master, student_tree)  # 重新加载学生列表
+
