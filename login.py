@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 import json
 import hashlib
-from dashboard import open_dashboard
+from dashboard import open_dashboard, open_admin_dashboard
 
 def check_login(username, password, role):
     """
@@ -33,7 +33,7 @@ class LoginWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("User Login")
-        self.root.geometry("350x250")
+        self.root.geometry("350x280")
         self.root.configure(bg="#f4f4f4")
 
         # Styling with ttk
@@ -58,21 +58,27 @@ class LoginWindow:
         self.role_var = tk.StringVar(value="Student")
         student_rb = ttk.Radiobutton(frame, text="Student", variable=self.role_var, value="Student")
         teacher_rb = ttk.Radiobutton(frame, text="Teacher", variable=self.role_var, value="Teacher")
+        admin_rb = ttk.Radiobutton(frame, text="Administrator", variable=self.role_var, value="Administrator")
         student_rb.grid(row=2, column=1, sticky="w", padx=5)
         teacher_rb.grid(row=3, column=1, sticky="w", padx=5)
+        admin_rb.grid(row=4, column=1, sticky='w', padx=5)
 
         # Login button
         self.login_button = ttk.Button(frame, text="Login", command=self.login)
-        self.login_button.grid(row=4, column=0, columnspan=2, pady=15)
+        self.login_button.grid(row=5, column=0, columnspan=2, pady=15)
 
     def login(self):
         username = self.username_entry.get()
         password = self.password_entry.get()
         role = self.role_var.get()
 
+
         if check_login(username, password, role):
             self.root.destroy()  # Close login window
-            open_dashboard(username, role)  # Open dashboard
+            if role == 'Administrator':
+                open_admin_dashboard()
+            else:
+                open_dashboard(username, role)  # Open dashboard
         else:
             messagebox.showerror("Login Failed", "Invalid username or password")
 

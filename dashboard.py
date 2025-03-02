@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import database as db
 import teacher as tc
 import student as st
+import administrator as ad
 
 
 def show_user_info(right_frame, user_id, role):
@@ -72,6 +73,33 @@ def show_user_info(right_frame, user_id, role):
 
     # TODO:展示一些信息 甭管展示什么 最后再说
 
+def open_admin_dashboard():
+    root = tk.Tk()
+    root.title(f"Dashboard")
+    root.geometry("800x600")
+
+    # 左侧功能区
+    left_frame = tk.Frame(root, width=200, bg="#f0f0f0")
+    left_frame.pack(side=tk.LEFT, fill=tk.Y)
+
+    # 右侧显示区域
+    right_frame = tk.Frame(root, bg="#ffffff")
+    right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
+
+
+    button1 = ttk.Button(left_frame, text="Student\nManagement", command=lambda: ad.manage_student(right_frame))
+    button1.pack(pady=10, padx=10, fill=tk.X)
+
+    title_label = tk.Label(
+        right_frame,
+        text="Welcome Back!",
+        font=("Segoe UI", 18, "bold"),
+        fg="#333333",  # 字体颜色
+        bg="#ffffff",  # 背景颜色
+    )
+    title_label.pack(pady=(40, 20))  # 上方留出 10 像素，下方留出 20 像素
+
+    root.mainloop()
 
 def open_dashboard(user_id, role):
     root = tk.Tk()
@@ -96,15 +124,15 @@ def open_dashboard(user_id, role):
         button2 = ttk.Button(left_frame, text="Grade", command=lambda: st.show_grades(right_frame, user_id))
         button2.pack(pady=10, padx=10, fill=tk.X)
     else:
-        button2 = ttk.Button(left_frame, text="Student\nManagement", command=lambda: tc.manage_student(right_frame))
+        button2 = ttk.Button(left_frame, text="Course", command=lambda: tc.show_courses(right_frame, user_id))
         button2.pack(pady=10, padx=10, fill=tk.X)
 
     if role == "Student":
         button3 = ttk.Button(left_frame, text="Course", command=lambda: st.show_courses(right_frame, user_id))
         button3.pack(pady=10, padx=10, fill=tk.X)
-    else:
-        button3 = ttk.Button(left_frame, text="Course", command=lambda: tc.show_courses(right_frame, user_id))
-        button3.pack(pady=10, padx=10, fill=tk.X)
+    # else:
+    #     button3 = ttk.Button(left_frame, text="Course", command=lambda: tc.show_courses(right_frame, user_id))
+    #     button3.pack(pady=10, padx=10, fill=tk.X)
 
     root.mainloop()
 
