@@ -25,19 +25,19 @@ def get_user_info(user_id, role):
     conn.close()
 
     return user_info
-def get_enrollment(student_id):
+
+def get_course_info(student_id):
     """
-    Retrieves courses a student is enrolled in.
-    Returns: (CourseID, Course_Name, Teacher_Name, Status, Enrollment Date)
+    Retrieves courses assigned to a teacher.
+    Returns: (CourseID, Course_Name, Schedule, Capacity)
     """
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT e.CourseID, c.Course_Name, t.Teacher_Name, e.Status, e.Enrollment_Date "
-           "FROM Enrollment e "
-           "JOIN Course c ON e.CourseID = c.CourseID "
-           "JOIN Teacher t ON e.TeacherID = t.TeacherID "
-           "WHERE e.StudentID = %s")
-    cur.execute(sql, (student_id,))
+    sql = ("SELECT ci.CourseID, c.Course_Name, t.Teacher_Name, ci.Schedule, ci.Capacity "
+           "FROM Course_Info ci "
+           "JOIN Course c ON ci.CourseID = c.CourseID "
+           "JOIN Teacher t ON ci.TeacherID = t.TeacherID WHERE ci.Courseid NOT IN (SELECT e.Courseid FROM enrollment e WHERE e.StudentID = %s and status = 'Success')")
+    cur.execute(sql, (student_id, ))
     rows = cur.fetchall()
     conn.close()
     return rows
@@ -58,6 +58,39 @@ def get_course_info_by_teacher(teacher_id):
     conn.close()
     return rows
 
+def get_teacher_id(teacher_name):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = """
+        SELECT t.TeacherID
+        FROM Teacher t
+        WHERE t.teacher_name = %s
+    """
+
+    cur.execute(sql, (teacher_name,))
+    teacher_id = cur.fetchone()
+    conn.close()
+    return teacher_id
+
+#获取选课信息
+def get_enrollment(student_id):
+    """
+    Retrieves courses a student is enrolled in.
+    Returns: (CourseID, Course_Name, Teacher_Name, Status, Enrollment Date)
+    """
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT e.CourseID, c.Course_Name, t.Teacher_Name, e.Status, e.Enrollment_Date "
+           "FROM Enrollment e "
+           "JOIN Course c ON e.CourseID = c.CourseID "
+           "JOIN Teacher t ON e.TeacherID = t.TeacherID "
+           "WHERE e.StudentID = %s")
+    cur.execute(sql, (student_id,))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+
 def enroll_course(student_id, course_id, teacher_id):
     """
     Inserts a new enrollment record.
@@ -65,7 +98,7 @@ def enroll_course(student_id, course_id, teacher_id):
     conn = connect.connect_db()
     cur = conn.cursor()
     sql = ("INSERT INTO Enrollment (CourseID, TeacherID, StudentID, Status, Enrollment_Date) "
-           "VALUES (%s, %s, %s, 'Enrolled', CURRENT_DATE)")
+           "VALUES (%s, %s, %s, 'Success', CURRENT_DATE)")
     try:
         cur.execute(sql, (course_id, teacher_id, student_id))
         conn.commit()
