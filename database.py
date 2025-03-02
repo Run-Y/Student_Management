@@ -159,7 +159,7 @@ def get_course_avg_grade(course_id, teacher_id):
     conn = connect.connect_db()
     cur = conn.cursor()
     sql = ("SELECT COUNT(*) AS num_students, AVG(grade) AS avg_grade "
-           "FROM grade"
+           "FROM grade "
            "WHERE courseid = %s")
     cur.execute(sql, (course_id,))
 
