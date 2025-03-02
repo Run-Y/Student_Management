@@ -1,6 +1,7 @@
 {
     "users": [
         {"username": "2023SE001", "password": "123456", "role": "Student"},
-        {"username": "T001", "password": "123456", "role": "Teacher"}
+        {"username": "T001", "password": "123456", "role": "Teacher"},
+        {"username": "root", "password": "123456", "role": "Administrator"}
     ]
 }
