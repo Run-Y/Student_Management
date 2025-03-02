@@ -44,7 +44,7 @@ def show_students(right_frame, tree):
         widget.destroy()
 
     # 创建 Treeview 显示学生信息
-    columns = ("Student ID", "Name", "Gender", "Major", "Grade")
+    columns = ("Student ID", "Name", "Gender", "Major", "Grade", "Grade_date")
     student_tree = ttk.Treeview(right_frame, columns=columns, show="headings")
 
     for col in columns:

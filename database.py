@@ -270,52 +270,7 @@ def add_student(studentid, name, gender, major, birthday, age):
     finally:
         conn.close()
 
-def get_enrollment_by_course(course_id):
-    """
-    获取某课程的所有学生信息。
-    返回：(StudentID, Student_Name, Status, Enrollment Date)
-    """
-    conn = connect.connect_db()
-    cur = conn.cursor()
-    sql = ("""
-        SELECT s.StudentID, s.Student_Name, e.Status, e.Enrollment_Date
-        FROM Enrollment e
-        JOIN Student s ON e.StudentID = s.StudentID
-        WHERE e.CourseID = %s
-    """)
-    cur.execute(sql, (course_id,))
-    rows = cur.fetchall()
-    conn.close()
-    return rows
 
-
-def update_student_grade(student_id, course_id, grade):
-    conn = connect.connect_db()
-    cur = conn.cursor()
-
-    sql = """
-    INSERT INTO Grade (CourseID, StudentID, Grade, Date)
-    VALUES (%s, %s, %s, CURRENT_DATE)
-    ON DUPLICATE KEY UPDATE Grade = VALUES(Grade), Date = VALUES(Date)
-    """
-
-    cur.execute(sql, (course_id, student_id, grade))
-    conn.commit()
-    conn.close()
-
-
-def delete_student(student_id, course_id):
-    conn = connect.connect_db()
-    cur = conn.cursor()
-
-    sql1 = "DELETE FROM Grade WHERE StudentID = %s AND CourseID = %s"
-    sql2 = "DELETE FROM Enrollment WHERE StudentID = %s AND CourseID = %s"
-
-    cur.execute(sql1, (student_id, course_id))
-    cur.execute(sql2, (student_id, course_id))
-
-    conn.commit()
-    conn.close()
 
 
 def get_students_by_course(course_id):
@@ -324,12 +279,14 @@ def get_students_by_course(course_id):
 
     sql = """
     SELECT s.StudentID, s.Student_Name, s.Gender, m.Major_Name, 
-           COALESCE(CAST(g.Grade AS TEXT), '-') AS Grade
+           COALESCE(CAST(g.Grade AS TEXT), '-') AS Grade,
+           COALESCE(CAST(g.Grade_date AS TEXT), '-') AS Grade_date
     FROM Enrollment e
     JOIN Student s ON e.StudentID = s.StudentID
     JOIN Major m ON s.MajorID = m.MajorID
     LEFT JOIN Grade g ON g.StudentID = s.StudentID AND g.CourseID = e.CourseID
     WHERE e.CourseID = %s
+    ORDER BY Grade_date DESC
     """
 
     cur.execute(sql, (course_id,))
