@@ -6,16 +6,15 @@ def get_user_info(user_id, role):
 
     if role == "Student":
         sql = """
-        SELECT s.StudentID, s.Student_Name, s.Gender, s.Birthday, s.Age, m.Major_Name
-        FROM Student s
-        JOIN Major m ON s.MajorID = m.MajorID
-        WHERE s.StudentID = %s
+        SELECT *
+        FROM student_info_view
+        WHERE StudentID = %s
         """
     elif role == "Teacher":
         sql = """
-        SELECT t.TeacherID, t.Teacher_Name
-        FROM Teacher t
-        WHERE t.TeacherID = %s
+        SELECT *
+        FROM teacher_info_view
+        WHERE TeacherID = %s
         """
     else:
         return None
