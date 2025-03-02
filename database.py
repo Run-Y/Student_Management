@@ -231,6 +231,45 @@ def delete_stu(student_id):
     finally:
         conn.close()
 
+def get_stuid():
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT MAX(studentid) "
+           "FROM student "
+           "WHERE studentid LIKE '{current_year}{major_code}%")
+
+    cur.execute(sql)
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def get_majors():
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT majorid "
+           "FROM major ")
+
+    cur.execute(sql)
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def add_student(studentid, name, gender, major, birthday, age):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("INSERT INTO student (studentid, student_name, gender, birthday, age, majorid) "
+           "VALUES (%s, %s, %s, %s, %s, %s,)")
+
+    try:
+        cur.execute(sql, (studentid, name, gender, birthday, age, major))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Add Student Error:", e)
+        return False
+    finally:
+        conn.close()
+
 
 
 

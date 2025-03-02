@@ -95,10 +95,9 @@ def open_dashboard(user_id, role):
     if role == "Student":
         button2 = ttk.Button(left_frame, text="Grade", command=lambda: st.show_grades(right_frame, user_id))
         button2.pack(pady=10, padx=10, fill=tk.X)
-    # else:
-    # TODO:写学生管理（包括增加学生，删除学生，查看学生）
-    # button2 = ttk.Button(left_frame, text="学生管理", command=lambda: ))
-    # button2.pack(pady=10, padx=10, fill=tk.X)
+    else:
+        button2 = ttk.Button(left_frame, text="Student\nManagement", command=lambda: tc.manage_student(right_frame))
+        button2.pack(pady=10, padx=10, fill=tk.X)
 
     if role == "Student":
         button3 = ttk.Button(left_frame, text="Course", command=lambda: st.show_courses(right_frame, user_id))
@@ -113,5 +112,5 @@ def open_dashboard(user_id, role):
 # 主程序
 if __name__ == "__main__":
     # 假设用户ID为 student_123 或 teacher_456，角色为 Student 或 Teacher
-    open_dashboard(user_id="2023SE001", role="Student")
     open_dashboard("T001", "Teacher")
+    open_dashboard(user_id="2023SE001", role="Student")
