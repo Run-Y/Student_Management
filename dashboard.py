@@ -42,18 +42,24 @@ def show_user_info(right_frame, user_id, role):
 
     if role == "Student":
         avg_grade = db.get_student_avg_grade(user_id)
-        avg_grade_value = float(avg_grade[0][0])
+        if avg_grade[0][0] is None:
+            avg_grade_value = 0
+        else:
+            avg_grade_value = float(avg_grade[0][0])
         grade_label = tk.Label(
-        right_frame,
-        text=f"Average Grade: {avg_grade_value:.2f}",
-        font=("Segoe UI", 14),
-        fg="#555555",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
-        )
+            right_frame,
+            text=f"Average Grade: {avg_grade_value:.2f}",
+            font=("Segoe UI", 14),
+            fg="#555555",  # 字体颜色
+            bg="#ffffff",  # 背景颜色
+            )
         grade_label.pack(pady=5)
 
         sum_credit = db.get_credit_sum(user_id)
-        sum_credit_value = float(sum_credit[0][0])
+        if sum_credit[0][0] is None:
+            sum_credit_value = 0
+        else:
+            sum_credit_value = float(sum_credit[0][0])
         credit_label = tk.Label(
         right_frame,
         text=f"Credit: {sum_credit_value}",
