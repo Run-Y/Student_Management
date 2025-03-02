@@ -150,21 +150,6 @@ def get_student_grades(student_id):
     return rows
 
 
-def get_course_avg_grade(course_id, teacher_id):
-    """
-    Retrieves the average grade and student count for a course taught by a specific teacher.
-    Returns: (num_students, avg_grade)
-    """
-    conn = connect.connect_db()
-    cur = conn.cursor()
-    sql = ("SELECT COUNT(*) AS num_students, AVG(grade) AS avg_grade "
-           "FROM grade "
-           "WHERE courseid = %s")
-    cur.execute(sql, (course_id,))
-
-    row = cur.fetchone()
-    conn.close()
-    return row if row else (0, None)
 
 def insert_grade(course_id, student_id, grade, grade_date, enrollment_date):
     conn = connect.connect_db()
@@ -194,18 +179,6 @@ def get_credit_sum(student_id):
            "JOIN grade g ON c.courseid = g.courseid "
            "WHERE studentid = %s")
     cur.execute(sql,(student_id, ))
-    rows = cur.fetchall()
-    conn.close()
-    return rows
-
-def query_teacher_course(teacher_id):
-    conn = connect.connect_db()
-    cur = conn.cursor()
-    sql = ("SELECT *"
-           "FROM course c"
-           "JOIN course_info ci ON c.courseid = ci.courseid"
-           "WHERE ci.teacherid = %s")
-    cur.execute(sql,(teacher_id, ))
     rows = cur.fetchall()
     conn.close()
     return rows
@@ -310,9 +283,9 @@ def get_enrollment_date(course_id, student_id):
     conn.close()
 
     if result:
-        return result[0]  # 返回 enrollment_date
+        return result[0]
     else:
-        return None  # 如果找不到记录，返回 None
+        return None
 
 
 
