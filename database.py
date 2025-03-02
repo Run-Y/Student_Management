@@ -167,15 +167,14 @@ def get_course_avg_grade(course_id, teacher_id):
     conn.close()
     return row if row else (0, None)
 
-def insert_grade(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date):
+def insert_grade(course_id, student_id, grade, grade_date, enrollment_date):
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("INSERT INTO grade (courseid, studentid. teacherid, grade, grade_date, enrollment_ddate)"
-           "VALUES (%s, %s, %s, %s, %s, %s)")
-    cur.execute(sql,(course_id, student_id,  teacher_id, grade, grade_date, enrolLment_date, ))
+    sql = ("INSERT INTO grade (courseid, studentid, grade, grade_date, enrollment_date) "
+           "VALUES (%s, %s, %s, %s, %s)")
+    cur.execute(sql, (course_id, student_id, grade, grade_date, enrollment_date))
     conn.commit()
     conn.close()
-    return
 
 def get_student_avg_grade(student_id):
     conn = connect.connect_db()
@@ -294,6 +293,27 @@ def get_students_by_course(course_id):
     conn.close()
 
     return students
+
+
+def get_enrollment_date(course_id, student_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
+    sql = """
+    SELECT enrollment_date 
+    FROM enrollment 
+    WHERE courseid = %s AND studentid = %s
+    """
+
+    cur.execute(sql, (course_id, student_id))
+    result = cur.fetchone()
+
+    conn.close()
+
+    if result:
+        return result[0]  # 返回 enrollment_date
+    else:
+        return None  # 如果找不到记录，返回 None
 
 
 

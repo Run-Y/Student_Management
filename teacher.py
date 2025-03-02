@@ -1,7 +1,6 @@
 import database as db
 import tkinter as tk
-from tkinter import ttk, messagebox
-
+from tkinter import ttk, messagebox, simpledialog
 
 def show_courses(right_frame, user_id):
     for widget in right_frame.winfo_children():
@@ -25,7 +24,6 @@ def show_courses(right_frame, user_id):
     tree.bind("<Double-1>", lambda event: show_students(right_frame, tree))
     tree.pack(expand=True, fill="both", padx=10, pady=10)
 
-
 def show_students(right_frame, tree):
     selected_item = tree.focus()
     if not selected_item:
@@ -34,7 +32,7 @@ def show_students(right_frame, tree):
 
     course_id = tree.item(selected_item)["values"][0]  # 获取课程ID
 
-    students = db.get_students_by_course(course_id)  # 这里修正
+    students = db.get_students_by_course(course_id)
 
     if not students:
         messagebox.showinfo("Students", "No students enrolled in this course.")
@@ -54,48 +52,35 @@ def show_students(right_frame, tree):
     for student in students:
         student_tree.insert("", "end", values=student)
 
+    student_tree.bind("<Double-1>", lambda event: add_grade(student_tree, course_id))
     student_tree.pack(expand=True, fill="both", padx=10, pady=10)
 
-
-
-def update_student_grade(right_frame, student_tree, course_id):
-    selected_item = student_tree.selection()
+def add_grade(student_tree, course_id):
+    selected_item = student_tree.focus()
     if not selected_item:
         messagebox.showwarning("Warning", "Please select a student.")
         return
 
-    student_id = student_tree.item(selected_item[0], "values")[0]
+    student_data = student_tree.item(selected_item)["values"]
+    student_id, student_name, _, _, grade, _ = student_data
 
-    grade_window = tk.Toplevel(right_frame)
-    grade_window.title("Update Grade")
-
-    tk.Label(grade_window, text="Enter New Grade:").pack(pady=5)
-    grade_entry = tk.Entry(grade_window)
-    grade_entry.pack(pady=5)
-
-    def save_grade():
-        new_grade = grade_entry.get()
-        if not new_grade.isdigit():
-            messagebox.showwarning("Invalid Input", "Grade must be a number.")
-            return
-
-        db.update_student_grade(course_id, student_id, new_grade)
-        messagebox.showinfo("Success", "Grade updated successfully.")
-        grade_window.destroy()
-        show_students(right_frame, student_tree)
-
-    tk.Button(grade_window, text="Save", command=save_grade).pack(pady=10)
-
-
-def delete_student(right_frame, student_tree):
-    selected_item = student_tree.selection()
-    if not selected_item:
-        messagebox.showwarning("Warning", "Please select a student to delete.")
+    if grade != "-":
+        messagebox.showinfo("Info", f"Student {student_name} already has a grade: {grade}")
         return
 
-    student_id = student_tree.item(selected_item[0], "values")[0]
+    grade = simpledialog.askstring("Input", f"Enter grade for {student_name}:")
+    if not grade:
+        return
 
-    if messagebox.askyesno("Confirm Delete", "Are you sure you want to delete this student?"):
-        db.delete_student(student_id)
-        messagebox.showinfo("Success", "Student deleted successfully.")
-        show_students(right_frame, student_tree)
+    grade_date = simpledialog.askstring("Input", "Enter grade date (YYYY-MM-DD):")
+    if not grade_date:
+        return
+
+    enrollment_date = db.get_enrollment_date(course_id, student_id)  # 从数据库获取入学日期
+    if not enrollment_date:
+        messagebox.showerror("Error", "Failed to retrieve enrollment date.")
+        return
+
+    db.insert_grade(course_id, student_id, grade, grade_date, enrollment_date)
+    messagebox.showinfo("Success", "Grade added successfully!")
+    show_students(student_tree.master, student_tree)
