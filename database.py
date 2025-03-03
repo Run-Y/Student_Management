@@ -125,7 +125,6 @@ def drop_course(student_id, course_id, teacher_id):
     finally:
         conn.close()
 
-
 def get_student_grades(student_id):
     """
     获取学生的成绩信息。
@@ -148,8 +147,6 @@ def get_student_grades(student_id):
     conn.close()
 
     return rows
-
-
 
 def insert_grade(course_id, student_id, grade, grade_date, enrollment_date):
     conn = connect.connect_db()
@@ -188,28 +185,33 @@ def delete_stu(student_id):
     cur = conn.cursor()
 
     try:
-        conn.autocommit = False
+        conn.autocommit = False  # 关闭自动提交
 
         cur.execute("DELETE FROM grade WHERE studentid = %s;", (student_id,))
         cur.execute("DELETE FROM enrollment WHERE studentid = %s;", (student_id,))
         cur.execute("DELETE FROM student WHERE studentid = %s;", (student_id,))
 
         conn.commit()
+        return True
 
-    except:
-        conn.rollback()  # Rollback in case of error
+    except Exception as e:
+        conn.rollback()  # 发生错误时回滚
+        print(f"Error deleting student {student_id}: {e}")
+        return False
 
     finally:
-        conn.close()
+        cur.close()  # 关闭游标
+        conn.close()  # 关闭连接
 
-def get_stuid():
+def get_stuid(current_year, major_code):
     conn = connect.connect_db()
     cur = conn.cursor()
     sql = ("SELECT MAX(studentid) "
            "FROM student "
-           "WHERE studentid LIKE '{current_year}{major_code}%")
+           "WHERE studentid LIKE %s")
 
-    cur.execute(sql)
+    pattern = f"{current_year}{major_code}%"
+    cur.execute(sql, ([pattern, ]))
     rows = cur.fetchall()
     conn.close()
     return rows
@@ -229,7 +231,7 @@ def add_student(studentid, name, gender, major, birthday, age):
     conn = connect.connect_db()
     cur = conn.cursor()
     sql = ("INSERT INTO student (studentid, student_name, gender, birthday, age, majorid) "
-           "VALUES (%s, %s, %s, %s, %s, %s,)")
+           "VALUES (%s, %s, %s, %s, %s, %s)")
 
     try:
         cur.execute(sql, (studentid, name, gender, birthday, age, major))
@@ -240,9 +242,6 @@ def add_student(studentid, name, gender, major, birthday, age):
         return False
     finally:
         conn.close()
-
-
-
 
 def get_students_by_course(course_id):
     conn = connect.connect_db()
@@ -266,7 +265,6 @@ def get_students_by_course(course_id):
 
     return students
 
-
 def get_enrollment_date(course_id, student_id):
     conn = connect.connect_db()
     cur = conn.cursor()
@@ -286,6 +284,52 @@ def get_enrollment_date(course_id, student_id):
         return result[0]
     else:
         return None
+
+def get_student_by_majors(major):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
+    sql = ("SELECT s.studentid, s.student_name, s.age, s.gender, s.majorid, s.birthday "
+           "FROM student s "
+           "WHERE majorid = %s")
+
+    cur.execute(sql, (major,))
+    students = cur.fetchall()
+    conn.close()
+
+    return students
+
+def get_stu_by_name(Name):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
+    sql = ("SELECT s.studentid, s.student_name, s.age, s.gender, s.majorid, s.birthday "
+           "FROM student s "
+           "WHERE student_name = %s")
+
+    cur.execute(sql, (Name,))
+    students = cur.fetchall()
+    conn.close()
+
+    return students
+
+def update_stu(Name, Birthday, Major, Gender, Age, StudentId):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
+    sql = ("UPDATE student "
+           "SET student_name = %s, birthday = %s, majorid = %s, gender = %s, age = %s "
+           "WHERE studentid = %s")
+
+    try:
+        cur.execute(sql, (Name, Birthday, Major, Gender, Age, StudentId))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Add Student Error:", e)
+        return False
+    finally:
+        conn.close()
 
 
 

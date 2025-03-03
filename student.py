@@ -137,53 +137,6 @@ def drop_selected_course(tree, student_id):
         else:
             messagebox.showerror("Drop Course", "Failed to drop course.")
 
-# def drop_course_ui(student_id):
-#     """
-#     退课 UI
-#     """
-#     courses = db.get_enrollment(student_id)
-#     if not courses:
-#         messagebox.showinfo("Drop Course", "No courses to drop.")
-#         return
-#
-#     drop_window = tk.Tk()
-#     drop_window.title("Drop Course")
-#     drop_window.geometry("400x250")
-#
-#     ttk.Label(drop_window, text="Select a course to drop:", font=("Arial", 12)).pack(pady=10)
-#
-#     selected_course = tk.StringVar()
-#     course_list = [f"{c[0]} - {c[1]}" for c in courses]
-#     print(f"Course List: {course_list}")
-#     # 创建 Combobox，但不绑定到 StringVar
-#     course_dropdown = ttk.Combobox(drop_window, values=course_list)
-#     course_dropdown.pack(pady=10)
-#
-#     # 默认选中第一项
-#     if course_list:
-#         course_dropdown.current(0)
-#
-#     def confirm_drop(selected_course):
-#         selected = selected_course.get()
-#         print(f"Selected Course: {selected}")  # 打印选中的课程
-#         if not selected_course.get():
-#             messagebox.showwarning("Drop Course", "Please select a course!")
-#             return
-#
-#         course_id = selected_course.get().split(" - ")[0]  # 提取课程 ID
-#         teacher_id = next(c[2] for c in courses if c[0] == course_id)  # 获取教师 ID
-#
-#         success = db.drop_course(student_id, course_id, teacher_id)
-#         if success:
-#             messagebox.showinfo("Drop Course", "Course dropped successfully!")
-#         else:
-#             messagebox.showerror("Drop Course", "Failed to drop course.")
-#
-#         drop_window.destroy()
-#
-#     ttk.Button(drop_window, text="Drop", command= lambda: confirm_drop(selected_course)).pack(pady=10)
-#     ttk.Button(drop_window, text="Cancel", command= lambda: drop_window.destroy()).pack(pady=5)
-
 def show_courses(right_frame, student_id):
     for widget in right_frame.winfo_children():
         widget.destroy()
