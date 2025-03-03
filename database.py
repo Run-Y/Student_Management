@@ -32,7 +32,7 @@ def get_course_info(student_id):
     """
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT ci.CourseID, c.Course_Name, t.Teacher_Name, ci.Schedule, ci.Capacity "
+    sql = ("SELECT ci.CourseID, c.Course_Name, t.Teacher_Name, ci.Schedule, ci.Capacity - count(e.studentid)"
            "FROM Course_Info ci "
            "JOIN Course c ON ci.CourseID = c.CourseID "
            "JOIN Teacher t ON ci.TeacherID = t.TeacherID WHERE ci.Courseid NOT IN (SELECT e.Courseid FROM enrollment e WHERE e.StudentID = %s and status = 'Success')")
@@ -88,7 +88,6 @@ def get_enrollment(student_id):
     rows = cur.fetchall()
     conn.close()
     return rows
-
 
 def enroll_course(student_id, course_id, teacher_id):
     """
@@ -179,6 +178,32 @@ def get_credit_sum(student_id):
     rows = cur.fetchall()
     conn.close()
     return rows
+
+
+def delete_enrollment(student_id, course_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
+    try:
+        conn.autocommit = False  # 关闭自动提交
+
+        cur.execute("DELETE FROM grade WHERE studentid = %s and courseid = %s;", (student_id, course_id))
+        cur.execute("DELETE FROM enrollment WHERE studentid = %s and courseid = %s;", (student_id, course_id))
+
+        conn.commit()
+        return True
+
+    except Exception as e:
+        conn.rollback()  # 发生错误时回滚
+        print(f"Error deleting student {student_id}: {e}")
+        return False
+
+    finally:
+        cur.close()  # 关闭游标
+        conn.close()  # 关闭连接
+
+
+
 
 def delete_stu(student_id):
     conn = connect.connect_db()
@@ -331,6 +356,19 @@ def update_stu(Name, Birthday, Major, Gender, Age, StudentId):
     finally:
         conn.close()
 
+def get_pre_course_id(courseid):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+
+    sql = ("SELECT p.prerequisiteid "
+           "FROM prerequisite p "
+           "WHERE p.courseid = %s")
+
+    cur.execute(sql, (courseid,))
+    pre_courses = cur.fetchall()
+    conn.close()
+
+    return pre_courses
 
 
 
