@@ -30,12 +30,30 @@ def get_course_info(student_id):
     Retrieves courses assigned to a teacher.
     Returns: (CourseID, Course_Name, Schedule, Capacity)
     """
+
+
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT ci.CourseID, c.Course_Name, t.Teacher_Name, ci.Schedule, ci.Capacity - count(e.studentid)"
-           "FROM Course_Info ci "
-           "JOIN Course c ON ci.CourseID = c.CourseID "
-           "JOIN Teacher t ON ci.TeacherID = t.TeacherID WHERE ci.Courseid NOT IN (SELECT e.Courseid FROM enrollment e WHERE e.StudentID = %s and status = 'Success')")
+    sql = """
+    SELECT 
+        ci.CourseID, 
+        c.Course_Name, 
+        t.Teacher_Name, 
+        ci.Schedule, 
+        (ci.Capacity - COUNT(e.StudentID)) AS Remaining_Capacity
+    FROM Course_Info ci
+    JOIN Course c ON ci.CourseID = c.CourseID 
+    JOIN Teacher t ON ci.TeacherID = t.TeacherID
+    LEFT JOIN enrollment e ON ci.CourseID = e.CourseID  
+    WHERE ci.CourseID NOT IN (
+        SELECT e.CourseID FROM enrollment e WHERE e.StudentID = %s AND e.status = 'S'
+    )
+    GROUP BY 
+        ci.CourseID, c.Course_Name, t.Teacher_Name, ci.Schedule, ci.Capacity
+    HAVING (ci.Capacity - COUNT(e.StudentID)) > 0  -- 直接用表达式
+    ORDER BY ci.CourseID;
+    """
+
     cur.execute(sql, (student_id, ))
     rows = cur.fetchall()
     conn.close()

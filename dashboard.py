@@ -140,6 +140,6 @@ def open_dashboard(user_id, role):
 # 主程序
 if __name__ == "__main__":
     # 假设用户ID为 student_123 或 teacher_456，角色为 Student 或 Teacher
-    open_admin_dashboard()
+    #open_admin_dashboard()
     #open_dashboard("T001", "Teacher")
-    # open_dashboard(user_id="2023SE001", role="Student")
+    open_dashboard(user_id="2023SE001", role="Student")

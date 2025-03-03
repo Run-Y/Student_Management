@@ -20,14 +20,29 @@ def enroll_course(tree, student_id):
         # 获取教师 ID
         teacher_id = db.get_teacher_id(teacher_name)
 
-        # 调用退课函数
-        success = db.enroll_course(student_id, course_id, teacher_id)
-        if success:
-            messagebox.showinfo("Enroll Course", "Course enrolled successfully!")
-            # 刷新表格
-            show_courses(tree.master.master, student_id)  # 刷新表格内容
+        pre_course_id = db.get_pre_course_id(course_id)
+
+        enroll_course_id = db.get_enrollment(student_id)
+
+        pre_course_set = set(pre_course_id)  # 先把元组转换为集合
+        enroll_course_set = set(enroll_course_id)  # 同样转换为集合
+
+        # 检查 pre_course_set 是否是 enroll_course_set 的子集
+        if pre_course_set.issubset(enroll_course_set):
+            # 调用退课函数
+            success = db.enroll_course(student_id, course_id, teacher_id)
+            if success:
+                messagebox.showinfo("Enroll Course", "Course enrolled successfully!")
+                # 刷新表格
+                show_courses(tree.master.master, student_id)  # 刷新表格内容
+            else:
+                messagebox.showerror("Enroll Course", "Failed to enroll course.")
         else:
-            messagebox.showerror("Enroll Course", "Failed to enroll course.")
+            messagebox.showerror("Enroll Course", "Student is missing some prerequisite courses.")
+
+
+
+
 
     return
 
@@ -65,7 +80,7 @@ def show_course_info(right_frame, student_id):
         messagebox.showinfo("Courses", "No courses can be enrolled.")
         return
 
-    columns = ("Course ID", "Course Name", "Teacher", "Schedule", "Capacity")
+    columns = ("Course ID", "Course Name", "Teacher", "Schedule", "Slots")
     tree = ttk.Treeview(table_frame, columns=columns, show="headings", selectmode="extended")
 
     # 设置列标题
@@ -77,7 +92,7 @@ def show_course_info(right_frame, student_id):
     tree.column("Course Name", width=150, anchor="center")  # 第二列宽一点
     tree.column("Teacher", width=120, anchor="center")  # 第三列中等宽度
     tree.column("Schedule", width=150, anchor="center")  # 第四列窄一点
-    tree.column("Capacity", width=90, anchor="center")  # 第五列中等宽度
+    tree.column("Slots", width=90, anchor="center")  # 第五列中等宽度
 
     # 插入数据
     for course in courses:
