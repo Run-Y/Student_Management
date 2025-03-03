@@ -106,17 +106,14 @@ def open_dashboard(user_id, role):
     root.title(f"Dashboard")
     root.geometry("800x600")
 
-    # 左侧功能区
     left_frame = tk.Frame(root, width=200, bg="#f0f0f0")
     left_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-    # 右侧显示区域
     right_frame = tk.Frame(root, bg="#ffffff")
     right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
 
     show_user_info(right_frame, user_id, role)
 
-    # 添加功能区按钮
     button1 = ttk.Button(left_frame, text="Profile", command=lambda: show_user_info(right_frame, user_id, role))
     button1.pack(pady=10, padx=10, fill=tk.X)
 
@@ -124,22 +121,20 @@ def open_dashboard(user_id, role):
         button2 = ttk.Button(left_frame, text="Grade", command=lambda: st.show_grades(right_frame, user_id))
         button2.pack(pady=10, padx=10, fill=tk.X)
     else:
-        button2 = ttk.Button(left_frame, text="Course", command=lambda: tc.show_courses(right_frame, user_id))
+        button2 = ttk.Button(left_frame, text="Course\nManagement", command=lambda: tc.show_courses(right_frame, user_id))
         button2.pack(pady=10, padx=10, fill=tk.X)
 
     if role == "Student":
         button3 = ttk.Button(left_frame, text="Course", command=lambda: st.show_courses(right_frame, user_id))
         button3.pack(pady=10, padx=10, fill=tk.X)
-    # else:
-    #     button3 = ttk.Button(left_frame, text="Course", command=lambda: tc.show_courses(right_frame, user_id))
-    #     button3.pack(pady=10, padx=10, fill=tk.X)
+    else:
+         button3 = ttk.Button(left_frame, text="Course\nEnrollment", command=lambda: tc.show_courses(right_frame, user_id))
+         button3.pack(pady=10, padx=10, fill=tk.X)
 
     root.mainloop()
 
 
-# 主程序
 if __name__ == "__main__":
-    # 假设用户ID为 student_123 或 teacher_456，角色为 Student 或 Teacher
     #open_admin_dashboard()
     open_dashboard("T003", "Teacher")
     #open_dashboard(user_id="2023SE001", role="Student")

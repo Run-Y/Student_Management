@@ -28,28 +28,22 @@ def generate_student_id(major_code):
     return new_student_id
 
 def submit_student(name, gender, major, birthday, right_frame):
-    """
-    提交学生信息
-    """
-    # 验证输入
+
     if not name or not gender or not major or not birthday:
         messagebox.showwarning("Input Error", "Please fill in all fields!")
         return
 
-    # 验证生日格式
     try:
         birthday_date = datetime.datetime.strptime(birthday, "%Y-%m-%d")
     except ValueError:
         messagebox.showwarning("Input Error", "Invalid birthday format! Please use YYYY-MM-DD.")
         return
 
-    # 计算年龄
     today = datetime.datetime.today()
     age = today.year - birthday_date.year - ((today.month, today.day) < (birthday_date.month, birthday_date.day))
 
     student_id = generate_student_id(major)
 
-    # 显示结果
     result = f"Student ID: {student_id}\nName: {name}\nGender: {gender}\nMajor: {major}\nBirthday: {birthday}\nAge: {age}"
     if db.add_student(student_id, name, gender, major, birthday, age):
         messagebox.showinfo("Submission Successful", result)
@@ -66,43 +60,39 @@ def add_student(right_frame):
     title_label = tk.Label(
         right_frame,
         text="Add New Student",
-        font=("Segoe UI", 22, "bold"),  # 标题稍微加大
+        font=("Segoe UI", 22, "bold"),
         fg="#333333",
         bg="#ffffff",
     )
-    title_label.pack(pady=(30, 10))  # 适当缩小间距
+    title_label.pack(pady=(30, 10))
 
-    # 让 form_frame 居中
     form_frame = tk.Frame(right_frame, bg="#ffffff")
     form_frame.pack(pady=(30, 10))
 
-    # 让表单左右对齐
-    form_frame.grid_columnconfigure(0, weight=1)  # 左列
-    form_frame.grid_columnconfigure(1, weight=1)  # 右列
 
-    label_width = 15   # 统一 Label 宽度
-    input_width = 20   # 统一输入框宽度
-    font_style = ("Segoe UI", 14)  # 设置大一点的字体
+    form_frame.grid_columnconfigure(0, weight=1)
+    form_frame.grid_columnconfigure(1, weight=1)
 
-    # Student Name
+    label_width = 15
+    input_width = 20
+    font_style = ("Segoe UI", 14)
+
     tk.Label(form_frame, text="Student Name:", font=font_style, bg="#ffffff", width=label_width, anchor="e").grid(row=0, column=0, pady=6, padx=20, sticky="e")
     name_entry = tk.Entry(form_frame, font=font_style, width=input_width)
     name_entry.grid(row=0, column=1, pady=6, padx=20, sticky="w")
 
-    # Gender
     tk.Label(form_frame, text="Gender:", font=font_style, bg="#ffffff", width=label_width, anchor="e").grid(row=1, column=0, pady=6, padx=20, sticky="e")
     gender_var = tk.StringVar()
     gender_combobox = ttk.Combobox(form_frame, textvariable=gender_var, values=["Male", "Female"], font=font_style, width=input_width - 2)
     gender_combobox.grid(row=1, column=1, pady=6, padx=20, sticky="w")
     gender_combobox.current(0)
 
-    # Major
+
     tk.Label(form_frame, text="Major:", font=font_style, bg="#ffffff", width=label_width, anchor="e").grid(row=2, column=0, pady=6, padx=20, sticky="e")
     major_var = tk.StringVar()
     major_combobox = ttk.Combobox(form_frame, textvariable=major_var, font=font_style, width=input_width - 2)
     major_combobox.grid(row=2, column=1, pady=6, padx=20, sticky="w")
 
-    # 从数据库中加载专业列表
     majors = db.get_majors()
     if majors:
         major_combobox["values"] = majors
@@ -110,12 +100,10 @@ def add_student(right_frame):
     else:
         messagebox.showwarning("Error", "Failed to load major list!")
 
-    # Birthday
     tk.Label(form_frame, text="Birthday:", font=font_style, bg="#ffffff", width=label_width, anchor="e").grid(row=3, column=0, pady=6, padx=20, sticky="e")
     birthday_entry = tk.Entry(form_frame, font=font_style, width=input_width)
     birthday_entry.grid(row=3, column=1, pady=6, padx=20, sticky="w")
 
-    # 提交按钮
     submit_button = ttk.Button(
         form_frame,
         text="Add",
@@ -123,7 +111,7 @@ def add_student(right_frame):
             name_entry.get(), gender_var.get(), major_var.get(), birthday_entry.get(), right_frame
         )
     )
-    submit_button.grid(row=4, column=0, columnspan=2, pady=15)  # 让按钮居中，并调整间距
+    submit_button.grid(row=4, column=0, columnspan=2, pady=15)
 
     return
 
@@ -133,20 +121,16 @@ def search_stu_by_name(table_frame, StudentName):
     for widget in table_frame.winfo_children():
         widget.destroy()
 
-    # 创建 Treeview 显示成绩信息
     columns = ("Student ID", "Name", "Age", "Gender", "Major")
     tree = ttk.Treeview(table_frame, columns=columns, show="headings", selectmode="extended")
 
-    # 设置列标题
     for col in columns:
         tree.heading(col, text=col)
-        tree.column(col, width=120, anchor="center")  # 居中对齐
+        tree.column(col, width=120, anchor="center")
 
-    # 插入数据
     for student in students:
         tree.insert("", "end", values=student)
 
-    # 显示表格
     tree.pack(expand=True, fill="both")
 
     return tree
@@ -157,20 +141,17 @@ def search_stu_by_major(table_frame, MajorID):
     for widget in table_frame.winfo_children():
         widget.destroy()
 
-    # 创建 Treeview 显示成绩信息
+
     columns = ("Student ID", "Name", "Age", "Gender")
     tree = ttk.Treeview(table_frame, columns=columns, show="headings", selectmode="extended")
 
-    # 设置列标题
     for col in columns:
         tree.heading(col, text=col)
-        tree.column(col, width=120, anchor="center")  # 居中对齐
+        tree.column(col, width=120, anchor="center")
 
-    # 插入数据
     for student in students:
         tree.insert("", "end", values=student)
 
-    # 显示表格
     tree.pack(expand=True, fill="both")
 
     return tree
@@ -178,8 +159,8 @@ def search_stu_by_major(table_frame, MajorID):
 def get_selected_student(tree):
     selected = tree.selection()
     if selected:
-        return tree.item(selected[0])["values"]  # 返回选中的行数据
-    return None  # 如果没选中，返回 None
+        return tree.item(selected[0])["values"]
+    return None
 
 
 def edit_student(right_frame):
@@ -189,75 +170,68 @@ def edit_student(right_frame):
     title_label = tk.Label(
         right_frame,
         text="Edit Student",
-        font=("Segoe UI", 22, "bold"),  # 标题稍微加大
+        font=("Segoe UI", 22, "bold"),
         fg="#333333",
         bg="#ffffff",
     )
-    title_label.pack(pady=(30, 10))  # 适当缩小间距
+    title_label.pack(pady=(30, 10))
 
     info_frame = tk.Frame(right_frame, bg="#ffffff")
     info_frame.pack(pady=(30, 10))
 
-    font_style = ("Segoe UI", 14)  # 设置大一点的字体
+    font_style = ("Segoe UI", 14)
 
-    # Student Name Label
+
     tk.Label(info_frame, text="Student Name:", font=font_style, bg="#ffffff", width=15, anchor="e").grid(
         row=0, column=0, pady=6, padx=20, sticky="e"
     )
 
-    # Student Name Entry
-    name_entry = tk.Entry(info_frame, font=font_style, width=20)  # 增加宽度，使其和 Major 统一
+
+    name_entry = tk.Entry(info_frame, font=font_style, width=20)
     name_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
-    # Search Button for Name
+
     search_name_button = ttk.Button(info_frame, text="Search", command=lambda: set_tree(search_stu_by_name(table_frame, name_entry.get())))
     search_name_button.grid(row=0, column=2, padx=10, pady=5)
 
-    # Major Label
     tk.Label(info_frame, text="Select Major:", font=font_style, bg="#ffffff", width=15, anchor="e").grid(
         row=1, column=0, pady=6, padx=20, sticky="e"
     )
 
-    # Major Combobox
     major_var = tk.StringVar()
     major_combobox = ttk.Combobox(info_frame, textvariable=major_var, font=font_style, width=18)  # 保持统一
     major_combobox.grid(row=1, column=1, pady=5, padx=10, sticky="w")
 
-    # Search Button for Major
     search_major_button = ttk.Button(info_frame, text="Search", command=lambda: set_tree(search_stu_by_major(table_frame, major_var.get())))
     search_major_button.grid(row=1, column=2, padx=10, pady=5)
 
-    # Load Major List
     majors = db.get_majors()
     if majors:
         major_combobox["values"] = majors
     else:
         messagebox.showwarning("Error", "Failed to load major list!")
 
-    # 创建表格容器
     table_frame = tk.Frame(right_frame, bg="#ffffff")
     table_frame.pack(padx=20, pady=(0, 20))
 
     button_frame = tk.Frame(right_frame, bg="#ffffff")
     button_frame.pack(pady=(0, 20))
 
-    # 创建样式对象
     style = ttk.Style()
     style.configure("LargeFont.TButton", font=("Segoe UI", 14))
-    style.theme_use("default")  # 使用默认主题
     style.configure("Treeview",
-                    font=("Segoe UI", 12),  # 设置表格字体大小
+                    font=("Segoe UI", 12),
                     background="#ffffff",
                     foreground="#333333",
                     rowheight=25,
                     fieldbackground="#ffffff")
-    style.map("Treeview", background=[("selected", "#0078d7")])  # 选中行的背景颜色
+    style.map("Treeview", background=[("selected", "#0078d7")])
 
-    # 设置表头样式
+
     style.configure("Treeview.Heading",
                     font=("Segoe UI", 12, "bold"),
-                    background="#f0f0f0",  # 表头背景颜色
-                    foreground="#333333")  # 表头字体颜色
+                    background="#f0f0f0",
+                    foreground="#333333")
 
     tree_var = {"tree": None}
 
@@ -265,22 +239,21 @@ def edit_student(right_frame):
         tree_var["tree"] = new_tree
 
     def update_student(name, gender, major, birthday, student_id):
-        # 验证输入
+
         if not name_entry or not gender or not major_var or not birthday:
             messagebox.showwarning("Input Error", "Please fill in all fields!")
             return
-        # 验证生日格式
+
         try:
             birthday_date = datetime.datetime.strptime(birthday, "%Y-%m-%d")
         except ValueError:
             messagebox.showwarning("Input Error", "Invalid birthday format! Please use YYYY-MM-DD.")
             return
 
-        # 计算年龄
+
         today = datetime.datetime.today()
         age = today.year - birthday_date.year - ((today.month, today.day) < (birthday_date.month, birthday_date.day))
 
-        # 显示结果
         result = f"Student ID: {student_id}\nName: {name}\nGender: {gender}\nMajor: {major}\nBirthday: {birthday}\nAge: {age}"
         if db.update_stu(name, birthday, major, gender, age, student_id):
             messagebox.showinfo("Submission Successful", result)
@@ -302,7 +275,6 @@ def edit_student(right_frame):
 
         student_id, name, age, gender, major, birthday = selected_student
 
-        # 创建编辑界面
         edit_form = tk.Toplevel()
         edit_form.title("Edit Student Info")
         edit_form.geometry("400x300")
@@ -317,7 +289,6 @@ def edit_student(right_frame):
         birth_entry.grid(row=1, column=1, padx=10, pady=5)
         birth_entry.insert(0, birthday)
 
-        # Gender
         tk.Label(edit_form, text="Gender:").grid(row=2, column=0, padx=10, pady=5)
         gender_var = tk.StringVar()
         gender_combobox = ttk.Combobox(edit_form, textvariable=gender_var, values=["Male", "Female"], width=18)
@@ -325,14 +296,12 @@ def edit_student(right_frame):
         gender_var.set(gender)
 
 
-        # Major
         tk.Label(edit_form, text="Major:").grid(row=3, column=0, padx=10, pady=5)
         major_var = tk.StringVar()
         major_combobox = ttk.Combobox(edit_form, textvariable=major_var, width=18)
         major_combobox.grid(row=3, column=1, padx=12, pady=5,)
         major_var.set(major)
 
-        # 从数据库中加载专业列表
         majors = db.get_majors()
         if majors:
             major_combobox["values"] = majors
@@ -382,15 +351,13 @@ def manage_student(right_frame):
         right_frame,
         text="Student Management",
         font=("Segoe UI", 18, "bold"),
-        fg="#333333",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
+        fg="#333333",
+        bg="#ffffff",
     )
-    title_label.pack(pady=(40, 20))  # 上方留出 10 像素，下方留出 20 像素
-
+    title_label.pack(pady=(40, 20))
     button_frame = tk.Frame(right_frame, bg="#ffffff")
     button_frame.pack(pady=(0, 20))
 
-    # 创建样式对象
     style = ttk.Style()
     style.configure("LargeFont.TButton", font=("Segoe UI", 18))
 

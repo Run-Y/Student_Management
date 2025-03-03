@@ -25,6 +25,18 @@ def get_user_info(user_id, role):
 
     return user_info
 
+def get_course_info_for_stu(course_id, teacher_name):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT ci.CourseID, c.Course_Name, t.Teacher_Name, c.credits, ci.Schedule, ci.Capacity "
+           "FROM Course_Info ci "
+           "JOIN Course c ON ci.CourseID = c.CourseID "
+           "JOIN teacher t ON ci.teacherid = (SELECT teacherid FROM teacher WHERE teacher_name = %s) "
+           "WHERE t.Teacher_Name = %s AND ci.courseid = %s")
+    cur.execute(sql, (teacher_name, teacher_name, course_id))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
 def get_course_info(student_id):
     """
     Retrieves courses assigned to a teacher.
@@ -114,7 +126,7 @@ def enroll_course(student_id, course_id, teacher_id):
     conn = connect.connect_db()
     cur = conn.cursor()
     sql = ("INSERT INTO Enrollment (CourseID, TeacherID, StudentID, Status, Enrollment_Date) "
-           "VALUES (%s, %s, %s, 'Success', CURRENT_DATE)")
+           "VALUES (%s, %s, %s, 'Enrolled', CURRENT_DATE)")
     try:
         cur.execute(sql, (course_id, teacher_id, student_id))
         conn.commit()
@@ -125,15 +137,15 @@ def enroll_course(student_id, course_id, teacher_id):
     finally:
         conn.close()
 
-def drop_course(student_id, course_id, teacher_id):
+def drop_course(student_id, course_id, teacher_id, enroll_date):
     """
     Removes a student's enrollment from a course.
     """
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = "DELETE FROM Enrollment WHERE StudentID = %s AND CourseID = %s AND TeacherID = %s"
+    sql = "DELETE FROM Enrollment WHERE StudentID = %s AND CourseID = %s AND TeacherID = %s AND enrollment_date = %s"
     try:
-        cur.execute(sql, (student_id, course_id, teacher_id))
+        cur.execute(sql, (student_id, course_id, teacher_id, enroll_date))
         conn.commit()
         return cur.rowcount > 0
     except Exception as e:
@@ -215,10 +227,13 @@ def get_student_avg_grade(student_id):
 def get_credit_sum(student_id):
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("SELECT SUM(c.credits)"
-           "FROM course c "
-           "JOIN grade g ON c.courseid = g.courseid "
-           "WHERE studentid = %s")
+    sql = ('''
+        SELECT c.credits
+        FROM course c 
+        JOIN enrollment e on e.courseid = c.courseid
+        WHERE e.studentid = '2023SE001' and e.status = 'Success'
+    ''')
+
     cur.execute(sql,(student_id, ))
     rows = cur.fetchall()
     conn.close()
