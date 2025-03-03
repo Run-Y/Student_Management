@@ -6,23 +6,55 @@ def show_courses(right_frame, user_id):
     for widget in right_frame.winfo_children():
         widget.destroy()
 
+    title_label = tk.Label(
+        right_frame,
+        text="Your Courses",
+        font=("Segoe UI", 18, "bold"),
+        fg="#333333",
+        bg="#ffffff",
+    )
+    title_label.pack(pady=(40, 20))
+
+    table_frame = tk.Frame(right_frame, bg="#ffffff")
+    table_frame.pack(padx=20, pady=10)
+
     courses = db.get_course_info_by_teacher(user_id)
     if not courses:
         messagebox.showinfo("Courses", "No courses assigned.")
         return
 
     columns = ("Course ID", "Course Name", "Schedule", "Capacity")
-    tree = ttk.Treeview(right_frame, columns=columns, show="headings")
+    tree = ttk.Treeview(table_frame, columns=columns, show="headings")
 
     for col in columns:
         tree.heading(col, text=col)
-        tree.column(col, width=120)
+        tree.column(col, anchor="center")
+
+    tree.column("Course ID", width=100, anchor="center")
+    tree.column("Course Name", width=180, anchor="center")
+    tree.column("Schedule", width=180, anchor="center")
+    tree.column("Capacity", width=100, anchor="center")
 
     for course in courses:
         tree.insert("", "end", values=course)
 
     tree.bind("<Double-1>", lambda event: show_students(right_frame, tree))
     tree.pack(expand=True, fill="both", padx=10, pady=10)
+
+    style = ttk.Style()
+    style.configure("Treeview",
+                    font=("Segoe UI", 12),
+                    background="#ffffff",
+                    foreground="#333333",
+                    rowheight=25,
+                    fieldbackground="#ffffff")
+    style.map("Treeview", background=[("selected", "#0078d7")])
+
+
+    style.configure("Treeview.Heading",
+                    font=("Segoe UI", 12, "bold"),
+                    background="#f0f0f0",
+                    foreground="#333333")
 
 def show_students(right_frame, tree):
     selected_item = tree.focus()
@@ -41,13 +73,22 @@ def show_students(right_frame, tree):
     for widget in right_frame.winfo_children():
         widget.destroy()
 
+
+
     # 创建 Treeview 显示学生信息
     columns = ("Student ID", "Name", "Gender", "Major", "Grade", "Grade_date")
     student_tree = ttk.Treeview(right_frame, columns=columns, show="headings")
 
     for col in columns:
         student_tree.heading(col, text=col)
-        student_tree.column(col, width=120)
+        student_tree.column(col, width=120, anchor="center")
+
+    student_tree.column("Student ID", width=90, anchor="center")
+    student_tree.column("Name", width=80, anchor="center")
+    student_tree.column("Gender", width=80, anchor="center")
+    student_tree.column("Major", width=160, anchor="center")
+    student_tree.column("Grade", width=80, anchor="center")
+    student_tree.column("Grade_date", width=120, anchor="center")
 
     for student in students:
         student_tree.insert("", "end", values=student)
