@@ -168,9 +168,36 @@ def get_student_grades(student_id):
 def insert_grade(course_id, student_id, grade, grade_date, enrollment_date):
     conn = connect.connect_db()
     cur = conn.cursor()
-    sql = ("INSERT INTO grade (courseid, studentid, grade, grade_date, enrollment_date) "
+    sql_ins = ("INSERT INTO grade (courseid, studentid, grade, grade_date, enrollment_date) "
            "VALUES (%s, %s, %s, %s, %s)")
-    cur.execute(sql, (course_id, student_id, grade, grade_date, enrollment_date))
+    sql_up = ("UPDATE enrollment "
+              "SET status = %s "
+              "WHERE studentid = %s and courseid = %s")
+    try:
+        conn.autocommit = False  # 关闭自动提交
+
+        cur.execute(sql_ins, (course_id, student_id, grade, grade_date, enrollment_date))
+        if grade == "0":
+            cur.execute(sql_up, ("Fail",student_id, course_id ))
+        else:
+            cur.execute(sql_up, ("Success", student_id, course_id))
+
+        conn.commit()
+        return True
+
+    except Exception as e:
+        conn.rollback()  # 发生错误时回滚
+        print(f"Error deleting student {student_id}: {e}")
+        return False
+
+    finally:
+        cur.close()  # 关闭游标
+        conn.close()  # 关闭连接
+
+
+
+    cur.execute(sql_ins, (course_id, student_id, grade, grade_date, enrollment_date))
+
     conn.commit()
     conn.close()
 

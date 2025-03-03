@@ -75,6 +75,9 @@ def add_grade(student_tree, course_id):
     grade = simpledialog.askstring("Input", f"Enter grade for {student_name}:")
     if not grade:
         return
+    if 0 > int(grade) or int(grade) > 5:
+        messagebox.showwarning("Input Error", "Grade must be between 0 and 5.")
+        return
 
     grade_date = simpledialog.askstring("Input", "Enter grade date (YYYY-MM-DD):")
     if not grade_date:
