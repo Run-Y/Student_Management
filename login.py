@@ -35,14 +35,11 @@ class LoginWindow:
         self.root.title("User Login")
         self.root.geometry("350x280")
         self.root.configure(bg="#f4f4f4")
-
-        # Styling with ttk
         style = ttk.Style()
         style.configure("TButton", font=("Arial", 12), padding=5)
         style.configure("TLabel", font=("Arial", 11), background="#f4f4f4")
         style.configure("TRadiobutton", background="#f4f4f4", font=("Arial", 10))
 
-        # Frame to contain input fields
         frame = tk.Frame(self.root, bg="#ffffff", padx=20, pady=20, relief="groove", bd=2)
         frame.pack(pady=20)
 
@@ -63,7 +60,6 @@ class LoginWindow:
         teacher_rb.grid(row=3, column=1, sticky="w", padx=5)
         admin_rb.grid(row=4, column=1, sticky='w', padx=5)
 
-        # Login button
         self.login_button = ttk.Button(frame, text="Login", command=self.login)
         self.login_button.grid(row=5, column=0, columnspan=2, pady=15)
 
@@ -74,11 +70,11 @@ class LoginWindow:
 
 
         if check_login(username, password, role):
-            self.root.destroy()  # Close login window
+            self.root.destroy()
             if role == 'Administrator':
                 open_admin_dashboard()
             else:
-                open_dashboard(username, role)  # Open dashboard
+                open_dashboard(username, role)
         else:
             messagebox.showerror("Login Failed", "Invalid username or password")
 

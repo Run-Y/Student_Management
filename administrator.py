@@ -4,26 +4,17 @@ from tkinter import ttk, messagebox
 import datetime
 
 def generate_student_id(major_code):
-    """
-    自动生成学号
-    :param major_code: 专业代码（例如 'SE'）
-    :return: 生成的学号（例如 '2023SE001'）
-    """
-    # 获取当前年份
     current_year = datetime.datetime.now().year
 
-    # 查询数据库中当前年份和专业代码下的最大顺序号
     result = db.get_stuid(current_year, major_code)
 
-    # 提取最大顺序号
     if result[0][0] is not None:
         last_student_id = result[0][0]
-        last_sequence = int(last_student_id[-3:])  # 提取最后 3 位顺序号
+        last_sequence = int(last_student_id[-3:])
         new_sequence = last_sequence + 1
     else:
         new_sequence = 1
 
-    # 生成新的学号
     new_student_id = f"{current_year}{major_code}{new_sequence:03d}"
     return new_student_id
 
@@ -50,7 +41,6 @@ def submit_student(name, gender, major, birthday, right_frame):
     else:
         messagebox.showinfo("Submission Failed", "Try Again!")
 
-    # 清空表单
     add_student(right_frame)
 
 def add_student(right_frame):
@@ -346,7 +336,6 @@ def manage_student(right_frame):
     for widget in right_frame.winfo_children():
         widget.destroy()
 
-    # 添加大标题
     title_label = tk.Label(
         right_frame,
         text="Student Management",
