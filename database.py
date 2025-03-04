@@ -162,7 +162,6 @@ def get_teacher_id(teacher_name):
     conn.close()
     return teacher_id
 
-#获取选课信息
 def get_enrollment(student_id):
     """
     Retrieves courses a student is enrolled in.
@@ -247,7 +246,7 @@ def insert_grade(course_id, student_id, grade, grade_date, enrollment_date):
               "SET status = %s "
               "WHERE studentid = %s and courseid = %s")
     try:
-        conn.autocommit = False  # 关闭自动提交
+        conn.autocommit = False
 
         cur.execute(sql_ins, (course_id, student_id, grade, grade_date, enrollment_date))
         if grade == "0":
@@ -259,13 +258,13 @@ def insert_grade(course_id, student_id, grade, grade_date, enrollment_date):
         return True
 
     except Exception as e:
-        conn.rollback()  # 发生错误时回滚
+        conn.rollback()
         print(f"Error deleting student {student_id}: {e}")
         return False
 
     finally:
-        cur.close()  # 关闭游标
-        conn.close()  # 关闭连接
+        cur.close()
+        conn.close()
 
 
 
@@ -306,7 +305,7 @@ def delete_enrollment(student_id, course_id):
     cur = conn.cursor()
 
     try:
-        conn.autocommit = False  # 关闭自动提交
+        conn.autocommit = False
 
         cur.execute("DELETE FROM grade WHERE studentid = %s and courseid = %s;", (student_id, course_id))
         cur.execute("DELETE FROM enrollment WHERE studentid = %s and courseid = %s;", (student_id, course_id))
@@ -315,13 +314,13 @@ def delete_enrollment(student_id, course_id):
         return True
 
     except Exception as e:
-        conn.rollback()  # 发生错误时回滚
+        conn.rollback()
         print(f"Error deleting student {student_id}: {e}")
         return False
 
     finally:
-        cur.close()  # 关闭游标
-        conn.close()  # 关闭连接
+        cur.close()
+        conn.close()
 
 
 
@@ -331,7 +330,7 @@ def delete_stu(student_id):
     cur = conn.cursor()
 
     try:
-        conn.autocommit = False  # 关闭自动提交
+        conn.autocommit = False
 
         cur.execute("DELETE FROM grade WHERE studentid = %s;", (student_id,))
         cur.execute("DELETE FROM enrollment WHERE studentid = %s;", (student_id,))
@@ -341,13 +340,13 @@ def delete_stu(student_id):
         return True
 
     except Exception as e:
-        conn.rollback()  # 发生错误时回滚
+        conn.rollback()
         print(f"Error deleting student {student_id}: {e}")
         return False
 
     finally:
-        cur.close()  # 关闭游标
-        conn.close()  # 关闭连接
+        cur.close()
+        conn.close()
 
 def get_stuid(current_year, major_code):
     conn = connect.connect_db()
