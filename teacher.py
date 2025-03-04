@@ -74,8 +74,6 @@ def show_students(right_frame, tree):
         widget.destroy()
 
 
-
-    # 创建 Treeview 显示学生信息
     columns = ("Student ID", "Name", "Gender", "Major", "Grade", "Grade_date")
     student_tree = ttk.Treeview(right_frame, columns=columns, show="headings")
 
@@ -95,8 +93,6 @@ def show_students(right_frame, tree):
 
     student_tree.bind("<Double-1>", lambda event: add_grade(student_tree, course_id))
     student_tree.pack(expand=True, fill="both", padx=10, pady=10)
-
-    # 添加删除学生按钮
     delete_button = tk.Button(right_frame, text="Delete Student", command=lambda: delete_student(student_tree, course_id))
     delete_button.pack(pady=10)
 
@@ -124,7 +120,7 @@ def add_grade(student_tree, course_id):
     if not grade_date:
         return
 
-    enrollment_date = db.get_enrollment_date(course_id, student_id)  # 从数据库获取入学日期
+    enrollment_date = db.get_enrollment_date(course_id, student_id)
     if not enrollment_date:
         messagebox.showerror("Error", "Failed to retrieve enrollment date.")
         return
@@ -148,23 +144,20 @@ def delete_student(student_tree, course_id):
 
     db.delete_enrollment(student_id, course_id)
     messagebox.showinfo("Success", f"Student {student_name} deleted successfully!")
-    show_students(student_tree.master, student_tree)  # 重新加载学生列表
+    show_students(student_tree.master, student_tree)
 
 
 def generate_course_id(major_code):
 
-    # 查询数据库中当前年份和专业代码下的最大顺序号
     result = db.get_course_id(major_code)
 
-    # 提取最大顺序号
     if result[0][0] is not None:
         last_course_id = result[0][0]
-        last_sequence = int(last_course_id[-2:])  # 提取最后 3 位顺序号
+        last_sequence = int(last_course_id[-2:])
         new_sequence = last_sequence + 1
     else:
         new_sequence = 1
 
-    # 生成新的学号
     new_course_id = f"{major_code}{new_sequence:02d}"
     return new_course_id
 

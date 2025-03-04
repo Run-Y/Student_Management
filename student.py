@@ -10,9 +10,9 @@ def enroll_course(tree, student_id):
 
 
     selected_course = tree.item(selected_item, "values")
-    course_id = selected_course[0]  # 提取课程 ID
-    course_name = selected_course[1]  # 提取课程名称
-    teacher_name = selected_course[2]  # 提取教师名称
+    course_id = selected_course[0]
+    course_name = selected_course[1]
+    teacher_name = selected_course[2]
 
 
     confirm = messagebox.askyesno("Enroll Course", f"Are you sure you want to enroll {course_name}?")
@@ -82,7 +82,6 @@ def show_detail(tree):
             f"Capacity: {capacity}"
         )
 
-        # 使用 messagebox 显示信息
         messagebox.showinfo("Course Details", message)
     else:
         messagebox.showwarning("No Data", "No course details found.")
