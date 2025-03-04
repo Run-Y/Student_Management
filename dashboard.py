@@ -128,7 +128,7 @@ def open_dashboard(user_id, role):
         button3 = ttk.Button(left_frame, text="Course", command=lambda: st.show_courses(right_frame, user_id))
         button3.pack(pady=10, padx=10, fill=tk.X)
     else:
-         button3 = ttk.Button(left_frame, text="Course\nEnrollment", command=lambda: tc.show_courses(right_frame, user_id))
+         button3 = ttk.Button(left_frame, text="Course\nEnrollment", command=lambda: tc.manage_course(right_frame, user_id))
          button3.pack(pady=10, padx=10, fill=tk.X)
 
     root.mainloop()
@@ -137,4 +137,4 @@ def open_dashboard(user_id, role):
 if __name__ == "__main__":
     #open_admin_dashboard()
     open_dashboard("T003", "Teacher")
-    #open_dashboard(user_id="2023SE001", role="Student")
+    #open_dashboard(user_id="2022ET001", role="Student")

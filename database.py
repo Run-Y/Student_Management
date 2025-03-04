@@ -25,6 +25,67 @@ def get_user_info(user_id, role):
 
     return user_info
 
+def get_course_id(major_code):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT MAX(courseid) "
+           "FROM course "
+           "WHERE courseid LIKE %s")
+
+    pattern = f"{major_code}%"
+    cur.execute(sql, ([pattern, ]))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+
+def get_all_course(teacher_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT c.courseid, c. course_name, c.credits, c.majorid, ci.schedule, ci.capacity "
+           "FROM course c "
+           "LEFT JOIN course_info ci ON ci.courseid = c.courseid "
+           "WHERE ci.teacherid <> %s or ci.teacherid is NULL")
+    cur.execute(sql, (teacher_id, ) )
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
+def add_course(courseid, name, credit, major, schedule, capacity, teacherid):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql_c = ("INSERT INTO course (courseid, course_name, majorid, credits ) "
+           "VALUES (%s, %s, %s, %s)")
+
+    sql_ci = ("INSERT INTO course_info (courseid, teacherid, capacity, schedule ) "
+           "VALUES (%s, %s, %s, %s)")
+    try:
+        cur.execute(sql_c, (courseid, name, major, credit))
+        cur.execute(sql_ci, (courseid, teacherid, capacity, schedule))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Add Student Error:", e)
+        return False
+    finally:
+        conn.close()
+
+def insert_course_info(course_id, teacher_id, schedule, capacity):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("INSERT INTO course_info (courseid, teacherid, schedule, capacity) "
+           "VALUES (%s, %s, %s, %s)")
+
+    try:
+        cur.execute(sql, (course_id, teacher_id, schedule, capacity))
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Add Student Error:", e)
+        return False
+    finally:
+        conn.close()
+
 def get_course_info_for_stu(course_id, teacher_name):
     conn = connect.connect_db()
     cur = conn.cursor()
@@ -327,6 +388,7 @@ def add_student(studentid, name, gender, major, birthday, age):
         return False
     finally:
         conn.close()
+
 
 def get_students_by_course(course_id):
     conn = connect.connect_db()
