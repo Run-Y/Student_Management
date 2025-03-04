@@ -187,9 +187,6 @@ def show_courses(right_frame, student_id):
     button_frame = tk.Frame(right_frame, bg="#ffffff")
     button_frame.pack(pady=(0, 20))
 
-    style = ttk.Style()
-    style.configure("LargeFont.TButton", font=("Segoe UI", 14))
-
     button1 = ttk.Button(button_frame, text="Enroll Course", command=lambda: show_course_info(right_frame, student_id),
                          style="LargeFont.TButton")
     button1.pack(side=tk.LEFT, padx=(0, 10), pady=(0, 20))
@@ -228,6 +225,8 @@ def show_courses(right_frame, student_id):
     tree.bind("<Double-1>", lambda event: show_detail(tree))
     tree.pack(expand=True, fill="both")
 
+    style = ttk.Style()
+    style.configure("LargeFont.TButton", font=("Segoe UI", 14))
     style.configure("Treeview",
                     font=("Segoe UI", 12),
                     background="#ffffff",
