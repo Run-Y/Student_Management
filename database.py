@@ -179,6 +179,17 @@ def get_enrollment(student_id):
     conn.close()
     return rows
 
+def check_status(course_id, student_id):
+    conn = connect.connect_db()
+    cur = conn.cursor()
+    sql = ("SELECT e.Status "
+           "FROM Enrollment e "
+           "WHERE e.StudentID = %s and e.courseid = %s")
+    cur.execute(sql, (student_id, course_id))
+    rows = cur.fetchall()
+    conn.close()
+    return rows
+
 def enroll_course(student_id, course_id, teacher_id):
     """
     Inserts a new enrollment record.

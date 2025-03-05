@@ -11,13 +11,12 @@ def show_user_info(right_frame, user_id, role):
         widget.destroy()
 
     user_info = db.get_user_info(user_id, role)
-    # 欢迎信息
     welcome_label = tk.Label(
         right_frame,
         text=f"Welcome, {user_info[1]}!",
         font=("Segoe UI", 20, "bold"),
-        fg="#333333",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
+        fg="#333333",
+        bg="#ffffff",
     )
     welcome_label.pack(pady=10)
 
@@ -26,8 +25,8 @@ def show_user_info(right_frame, user_id, role):
         right_frame,
         text=f"ID: {user_info[0]}",
         font=("Segoe UI", 14),
-        fg="#555555",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
+        fg="#555555",
+        bg="#ffffff",
     )
     id_label.pack(pady=5)
 
@@ -36,8 +35,8 @@ def show_user_info(right_frame, user_id, role):
         right_frame,
         text=f"Role: {role}",
         font=("Segoe UI", 14),
-        fg="#555555",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
+        fg="#555555",
+        bg="#ffffff",
     )
     role_label.pack(pady=5)
 
@@ -51,8 +50,8 @@ def show_user_info(right_frame, user_id, role):
             right_frame,
             text=f"Average Grade: {avg_grade_value:.2f}",
             font=("Segoe UI", 14),
-            fg="#555555",  # 字体颜色
-            bg="#ffffff",  # 背景颜色
+            fg="#555555",
+            bg="#ffffff",
             )
         grade_label.pack(pady=5)
 
@@ -137,4 +136,4 @@ def open_dashboard(user_id, role):
 if __name__ == "__main__":
     #open_admin_dashboard()
     open_dashboard("T003", "Teacher")
-    #open_dashboard(user_id="2022ET001", role="Student")
+    open_dashboard(user_id="2022ET001", role="Student")

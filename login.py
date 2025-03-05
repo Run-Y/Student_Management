@@ -4,6 +4,15 @@ from tkinter import ttk
 import json
 import hashlib
 from dashboard import open_dashboard, open_admin_dashboard
+import sys
+import os
+
+def resource_path(relative_path):
+    """获取打包后的资源路径"""
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 
 def check_login(username, password, role):
     """
@@ -12,7 +21,8 @@ def check_login(username, password, role):
     Otherwise, compare directly as plaintext.
     """
     try:
-        with open("users.json", "r", encoding="utf-8") as f:
+        users_json_path = resource_path("users.json")
+        with open(users_json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
             for user in data.get("users", []):
                 if username == user.get("username") and role == user.get("role"):

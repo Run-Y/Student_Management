@@ -13,6 +13,11 @@ def enroll_course(tree, student_id):
     course_id = selected_course[0]
     course_name = selected_course[1]
     teacher_name = selected_course[2]
+    slots = selected_course[-1]
+
+    if slots[0][0] == '0' or slots[0][0] == 0:
+        messagebox.showwarning("Enroll Course", "The number of available places in the course has been used. ")
+
 
 
     confirm = messagebox.askyesno("Enroll Course", f"Are you sure you want to enroll {course_name}?")
@@ -24,6 +29,8 @@ def enroll_course(tree, student_id):
 
         enroll_course_id = db.get_enrollment(student_id)
 
+
+
         pre_course_list = []
         enroll_course_list = []
         for pre_id in pre_course_id:
@@ -31,8 +38,18 @@ def enroll_course(tree, student_id):
         for cou_id in enroll_course_id:
             enroll_course_list.append(cou_id[0])
 
+        if course_id in enroll_course_list:
+
+            status = db.check_status(course_id, student_id)
+
+
+            if status[0][0] == "Enrolled" or status[0][0] == "Success":
+                messagebox.showerror("Enroll Course", "You have pass the course!")
+                return
+
         pre_course_set = set(pre_course_list)
         enroll_course_set = set(enroll_course_list)
+
 
 
         if pre_course_set.issubset(enroll_course_set):
