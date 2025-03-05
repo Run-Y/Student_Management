@@ -20,7 +20,7 @@ def show_user_info(right_frame, user_id, role):
     )
     welcome_label.pack(pady=10)
 
-    # 用户ID
+
     id_label = tk.Label(
         right_frame,
         text=f"ID: {user_info[0]}",
@@ -30,7 +30,6 @@ def show_user_info(right_frame, user_id, role):
     )
     id_label.pack(pady=5)
 
-    # 用户角色
     role_label = tk.Label(
         right_frame,
         text=f"Role: {role}",
@@ -64,24 +63,23 @@ def show_user_info(right_frame, user_id, role):
         right_frame,
         text=f"Credit: {sum_credit_value}",
         font=("Segoe UI", 14),
-        fg="#555555",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
+        fg="#555555",
+        bg="#ffffff",
         )
         credit_label.pack(pady=5)
 
 
-    # TODO:展示一些信息 甭管展示什么 最后再说
 
 def open_admin_dashboard():
     root = tk.Tk()
     root.title(f"Dashboard")
     root.geometry("800x600")
 
-    # 左侧功能区
+
     left_frame = tk.Frame(root, width=200, bg="#f0f0f0")
     left_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-    # 右侧显示区域
+
     right_frame = tk.Frame(root, bg="#ffffff")
     right_frame.pack(side=tk.RIGHT, expand=True, fill=tk.BOTH)
 
@@ -93,11 +91,10 @@ def open_admin_dashboard():
         right_frame,
         text="Welcome Back!",
         font=("Segoe UI", 18, "bold"),
-        fg="#333333",  # 字体颜色
-        bg="#ffffff",  # 背景颜色
+        fg="#333333",
+        bg="#ffffff",
     )
-    title_label.pack(pady=(40, 20))  # 上方留出 10 像素，下方留出 20 像素
-
+    title_label.pack(pady=(40, 20))
     root.mainloop()
 
 def open_dashboard(user_id, role):

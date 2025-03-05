@@ -180,8 +180,8 @@ def drop_selected_course(tree, student_id):
             success = db.drop_course(student_id, course_id, teacher_id, enroll_date)
             if success:
                 messagebox.showinfo("Drop Course", "Course dropped successfully!")
-                # 刷新表格
-                show_courses(tree.master.master, student_id)  # 刷新表格内容
+
+                show_courses(tree.master.master, student_id)
             else:
                 messagebox.showerror("Drop Course", "Failed to drop course.")
     else:
